@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Ventas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="firebase.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Registro de Ventas</h1>
+        <form id="venta-form">
+            <div class="section">
+                <h2>Datos del Cliente</h2>
+                <label for="cliente-linea">Línea del Llamado:</label>
+                <input type="text" id="cliente-linea" required><br>
+                <label for="cliente-nombre">Nombre:</label>
+                <input type="text" id="cliente-nombre" required><br>
+                <label for="cliente-dni">DNI:</label>
+                <input type="text" id="cliente-dni" required><br>
+                <label for="cliente-mail">Email:</label>
+                <input type="email" id="cliente-mail" required><br>
+                <label for="cliente-contacto">Linea Alternativa:</label>
+                <input type="tel" id="cliente-contacto" required><br>
+            </div>
+            <div class="section">
+                <h2>Datos de la Línea</h2>
+                <label for="linea-numero">Número de Línea:</label>
+                <input type="text" id="linea-numero" required><br>
+                <label for="linea-plan">Plan Adquirido:</label>
+                <select id="linea-plan" required>
+                    <option value="3GB">3 GB</option>
+                    <option value="6GB">6 GB</option>
+                    <option value="10GB">10 GB</option>
+                    <option value="15GB">15 GB</option>
+                    <option value="20GB">20 GB</option>
+                </select><br>
+            </div>
+            <div class="section">
+                <h2>Datos del Vendedor</h2>
+                <label for="vendedor-dni">DNI del Vendedor:</label>
+                <input type="text" id="vendedor-dni" required><br>
+            </div>
+            <button type="submit">Registrar Venta</button>
+            <a href="vendedor.html">Acceder a tus Ventas</a>
+        </form>
+        <div id="mensaje-error" class="error-message"></div>
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

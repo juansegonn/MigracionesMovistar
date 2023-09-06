@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas</title>
+    <script type="module" src="../firebase.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ventas</h1>
+        <form id="filtro-form">
+            <label for="filtro-nombre-vendedor">Filtrar por Nombre de Vendedor:</label>
+            <input type="text" id="filtro-nombre-vendedor">
+            <label for="filtro-dni-vendedor">Filtrar por DNI de Vendedor:</label>
+            <input type="text" id="filtro-dni-vendedor">
+            <label for="filtro-linea">Filtrar por Número de Línea:</label>
+            <input type="text" id="filtro-linea">
+            <label for="filtro-dni-cliente">Filtrar por DNI de Cliente:</label>
+            <input type="text" id="filtro-dni-cliente">
+            <label for="filtro-fecha">Filtrar por Fecha de Venta:</label>
+            <input type="date" id="filtro-fecha">
+            <button type="submit">Filtrar</button>
+        </form>
+        <div id="ventas-bo" class="section">
+            <!-- Aquí se mostrarán las ventas al Back Office -->
+        </div>
+    </div>
+    <script type="module" src="/scripts/distri.js"></script>
+
+</body>
+</html>

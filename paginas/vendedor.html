@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso a Ventas</title>
+    <script type="module" src="../firebase.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Acceso a Ventas</h1>
+        <form id="acceso-vendedor-form">
+            <label for="vendedor-dni">Ingresa tu DNI:</label>
+            <input type="text" id="vendedor-dni" required>
+            <button type="submit">Acceder</button>
+        </form>
+        <div id="ventas-vendedor" class="section">
+            <!-- Aquí se mostrarán las ventas del vendedor -->
+        </div>
+    </div>
+    <script type="module" src="/scripts/vendedor.js"></script>
+</body>
+</html>
+
