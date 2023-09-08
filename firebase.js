@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, doc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js";
 
 // Tu configuración de Firebase
 const firebaseConfig = {
@@ -22,4 +22,4 @@ const database = getFirestore(app);
 // Crear una referencia a una colección en Firestore (por ejemplo, "ventas")
 const ventasCollection = collection(database, "ventas");
 
-export { database, ventasCollection, addDoc, getDocs, query, where, doc, updateDoc, getDoc  };
+export { database, ventasCollection, addDoc, getDocs, query, where, doc, updateDoc, getDoc, deleteDoc  };

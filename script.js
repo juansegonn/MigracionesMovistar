@@ -29,7 +29,6 @@ ventaForm.addEventListener("submit", async function(event) {
     event.preventDefault();
     document.getElementById("loader").style.display = "block";
 
-
     // Datos del Cliente
     const clienteNombre = document.getElementById("cliente-nombre").value;
     const clienteDNI = document.getElementById("cliente-dni").value;
@@ -38,9 +37,17 @@ ventaForm.addEventListener("submit", async function(event) {
     const clienteLlamado = document.getElementById("cliente-linea").value;
 
     // Datos de la Línea
-    const lineaNumero = document.getElementById("linea-numero").value;
+    const lineaNumeroInput = document.getElementById("linea-numero");
+    const lineaNumero = lineaNumeroInput.value;
     const lineaPlan = document.getElementById("linea-plan").value;
-
+    
+    // Verificar si tiene 10 digitos
+    if (lineaNumero.length !== 10) {
+        mensajeError.textContent = "El número de línea debe tener exactamente 10 dígitos.";
+        mensajeError.style.display = "block";
+        document.getElementById("loader").style.display = "none";
+        return;
+    }
 
     // Verificar si ya existe una venta con el mismo número de línea
     const q = query(ventasCollection, where("linea.numero", "==", lineaNumero));
@@ -53,6 +60,7 @@ ventaForm.addEventListener("submit", async function(event) {
         document.getElementById("loader").style.display = "none";
         return;
     }
+
 
     // Datos del Vendedor
     const vendedorDNI = document.getElementById("vendedor-dni").value;
@@ -71,37 +79,37 @@ ventaForm.addEventListener("submit", async function(event) {
     
 
     // Agregar fecha y hora actual
-const fechaHoraActual = new Date();
-const anio = fechaHoraActual.getFullYear(); // Obtener el año (YYYY)
-const mes = (fechaHoraActual.getMonth() + 1).toString().padStart(2, '0'); // Obtener el mes (MM)
-const dia = fechaHoraActual.getDate().toString().padStart(2, '0'); // Obtener el día (DD)
+    const fechaHoraActual = new Date();
+    const anio = fechaHoraActual.getFullYear(); // Obtener el año (YYYY)
+    const mes = (fechaHoraActual.getMonth() + 1).toString().padStart(2, '0'); // Obtener el mes (MM)
+    const dia = fechaHoraActual.getDate().toString().padStart(2, '0'); // Obtener el día (DD)
 
-// Formatear la fecha en el formato "YYYY-MM-DD"
-const fechaFormateada = `${anio}-${mes}-${dia}`;
+    // Formatear la fecha en el formato "YYYY-MM-DD"
+    const fechaFormateada = `${anio}-${mes}-${dia}`;
 
-// Agregar el campo id
-const id = await doc(ventasCollection).id;
-    const nuevaVenta = {
-        id,
-        fecha: fechaFormateada,
-        hora: fechaHoraActual.toLocaleTimeString(),
-        cliente: {
-            nombre: clienteNombre,
-            dni: clienteDNI,
-            mail: clienteMail,
-            contacto: clienteContacto,
-            linea: clienteLlamado
-        },
-        linea: {
-            numero: lineaNumero,
-            plan: lineaPlan
-        },
-        vendedor: {
-            dni: vendedorDNI,
-            nombre: vendedorEncontrado.nombre // Agregamos el nombre del vendedor
-        },
-        estado: "ESPERANDO APROBACION BO" // Estado por defecto
-    };
+    // Agregar el campo id
+    const id = await doc(ventasCollection).id;
+        const nuevaVenta = {
+            id,
+            fecha: fechaFormateada,
+            hora: fechaHoraActual.toLocaleTimeString(),
+            cliente: {
+                nombre: clienteNombre,
+                dni: clienteDNI,
+                mail: clienteMail,
+                contacto: clienteContacto,
+                linea: clienteLlamado
+            },
+            linea: {
+                numero: lineaNumero,
+                plan: lineaPlan
+            },
+            vendedor: {
+                dni: vendedorDNI,
+                nombre: vendedorEncontrado.nombre // Agregamos el nombre del vendedor
+            },
+            estado: "APROBADA OK" // Estado por defecto
+        };
 
     // Guardar la venta en la base de datos
     const docRef = doc(ventasCollection, id); // Obtener una referencia al documento recién creado

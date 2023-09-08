@@ -38,23 +38,33 @@ document.addEventListener("DOMContentLoaded", async function() {
         const filtroDNIVendedor = document.getElementById("filtro-dni-vendedor").value.toLowerCase();
         const filtroLinea = document.getElementById("filtro-linea").value.toLowerCase();
         const filtroDNICliente = document.getElementById("filtro-dni-cliente").value.toLowerCase();
-        const filtroFecha = document.getElementById("filtro-fecha").value; 
+        const filtroFechaDesde = document.getElementById("filtro-fecha-desde").value;
+        const filtroFechaHasta = document.getElementById("filtro-fecha-hasta").value; 
+    
+        const fechaDesde = new Date(filtroFechaDesde);
+        const fechaHasta = new Date(filtroFechaHasta);
     
         const ventasFiltradas = ventasArray.filter(venta => {
             const cumpleFiltroNombreVendedor = venta.vendedor.nombre.toLowerCase().includes(filtroNombreVendedor);
             const cumpleFiltroDNIVendedor = venta.vendedor.dni.toLowerCase().includes(filtroDNIVendedor);
             const cumpleFiltroLinea = venta.linea.numero.toLowerCase().includes(filtroLinea);
             const cumpleFiltroDNICliente = venta.cliente.dni.toLowerCase().includes(filtroDNICliente);
-            const cumpleFiltroFecha = venta.fecha.includes(filtroFecha); 
-        
-            console.log(filtroFecha)
-            console.log(cumpleFiltroFecha)
             
-            return cumpleFiltroNombreVendedor && cumpleFiltroDNIVendedor && cumpleFiltroLinea && cumpleFiltroDNICliente && cumpleFiltroFecha;
+            const fechaVenta = new Date(venta.fecha);
+    
+            // Aplica el filtro de fecha solo si ambas fechas son válidas y están definidas
+            if (!isNaN(fechaDesde.getTime()) && !isNaN(fechaHasta.getTime())) {
+                return cumpleFiltroNombreVendedor && cumpleFiltroDNIVendedor && cumpleFiltroLinea && cumpleFiltroDNICliente &&
+                    fechaVenta >= fechaDesde && fechaVenta <= fechaHasta;
+            } else {
+                // Si no se ingresaron fechas válidas, aplica el filtro sin considerar la fecha
+                return cumpleFiltroNombreVendedor && cumpleFiltroDNIVendedor && cumpleFiltroLinea && cumpleFiltroDNICliente;
+            }
         });
     
         mostrarVentasBO(ventasFiltradas);
     });
+    
 
 
     function mostrarVentasBO(ventas) {
@@ -63,6 +73,25 @@ document.addEventListener("DOMContentLoaded", async function() {
         if (ventas.length === 0) {
             ventasBO.textContent = "No se encontraron ventas que coincidan con los filtros.";
         } else {
+            ventas.sort((ventaA, ventaB) => {
+                const fechaA = new Date(ventaA.fecha);
+                const fechaB = new Date(ventaB.fecha);
+    
+                if (fechaA.getTime() === fechaB.getTime()) {
+                    const horaA = ventaA.hora.split(":");
+                    const horaB = ventaB.hora.split(":");
+                    
+                    if (horaA[0] !== horaB[0]) {
+                        return horaB[0] - horaA[0];
+                    } else if (horaA[1] !== horaB[1]) {
+                        return horaB[1] - horaA[1];
+                    } else {
+                        return horaB[2] - horaA[2];
+                    }
+                }
+    
+                return fechaB - fechaA;
+            });
             ventas.forEach(venta => {
                 const ventaInfo = document.createElement("div");
                 ventaInfo.classList.add("venta-info-container");

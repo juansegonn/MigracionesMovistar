@@ -64,6 +64,20 @@ body {
   button[type="submit"]:hover {
     background-color: #ff5722;
   }
+
+  .anular-venta{
+    background-color: #ff732d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    align-self: flex-start;
+    border-radius: 4px;
+  }
+
+  .anular-venta:hover{
+    background-color: #ff5722;
+  }
   
   .error-message {
     background-color: #ff5722;

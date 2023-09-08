@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 `;
 
-                if (venta.estado === "ERROR DE LINEA" || venta.estado === "RETRABAJAR") {
+                if (venta.estado === "" || venta.estado === "") {
                     const editarLineaBtn = document.createElement("button");
                     editarLineaBtn.classList.add("editar-linea-btn")
                     editarLineaBtn.textContent = "Editar Línea";
@@ -230,7 +230,7 @@ async function mostrarVentas() {
         </button>
     `;
 
-        if (venta.estado === "ERROR DE LINEA" || venta.estado === "RETRABAJAR") {
+        if (venta.estado === "" || venta.estado === "") {
             const editarLineaBtn = document.createElement("button");
             editarLineaBtn.textContent = "Editar Línea";
             editarLineaBtn.classList.add("editar-linea-btn")
