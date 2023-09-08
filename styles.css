@@ -1,29 +1,272 @@
+/* Estilos para la página de Registro de Ventas */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
     background-color: #f2f2f2;
-}
-
-.container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
+    color: #333;
+    font-family: sans-serif;
+  }
+  
+  .container {
     background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+  }
+  
+  h1 {
+    color: #333;
+    text-align: center;
+  }
+  
+  form {
+    margin-top: 20px;
+  }
+  
+  .section {
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    color: #333;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  select {
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.section {
-    margin-bottom: 15px;
-}
-
-.error-message {
-    color: red;
-    margin-top: 10px;
-}
-
-.ver-detalles-btn {
+    outline: none;
+    color: #333;
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+  }
+  
+  button[type="submit"] {
+    background-color: #ff732d;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
     cursor: pointer;
-}
+    margin-right: 10px;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #ff5722;
+  }
+  
+  .error-message {
+    background-color: #ff5722;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+   a.button {
+    background-color: #ff732d;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+  }
+  
+  a.button:hover {
+    background-color: #ff5722;
+  }
 
+  .botonera{
+    display: flex;
+
+  }
+
+  .loader {
+    display: none;
+    width: 48px;
+    height: 48px;
+    margin: 5px 5px 5px 10px;
+    border-width: 3px;
+    border-style: dashed solid  solid dotted;
+    border-color: #ff732d #ff732d transparent #ff732d;
+    border-radius: 50%;
+    position: relative;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+  .loader::after {
+    content: '';  
+    box-sizing: border-box;
+    position: absolute;
+    left: 20px;
+    top: 31px;
+    border: 10px solid transparent;
+    border-right-color: #ff732d;
+    transform: rotate(-40deg);
+  }
+  .loader-vendedor{
+    display: none;
+    width: 24px;
+    height: 24px;
+    margin: 5px 5px 5px 10px;
+    border-width: 3px;
+    border-style: dashed solid  solid dotted;
+    border-color: #ff732d #ff732d transparent #ff732d;
+    border-radius: 50%;
+    position: relative;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+  .loader-vendedor::after {
+    content: '';  
+    box-sizing: border-box;
+    position: absolute;
+    left: 3px;
+    top: 15px;
+    border: 7px solid transparent;
+    border-right-color: #ff732d;
+    transform: rotate(-40deg)
+  }
+  
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  } 
+  
+/* Estilos para la página de acceso a ventas */
+.container {
+    max-width: auto;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  h3{
+    margin: 0;
+  }
+  
+  #acceso-vendedor-form {
+    margin-bottom: 20px;
+  }
+  
+  #acceso-vendedor-form label,
+  #acceso-vendedor-form input {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  #ventas-vendedor {
+    text-align: left;
+    margin: 0;
+  }
+  
+  p{
+    margin: 5px;
+  }
+  
+  /* Estilos para las tarjetas de ventas */
+  .venta-info-container {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .venta-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detalles-venta p{
+    margin: 5px 0px 10px 5px;
+  }
+  
+  .ver-detalles-btn {
+    color: #ff5722;
+    background-color: transparent;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    align-self: flex-end;
+    margin-top: -40px;
+  }
+  
+  .ver-detalles-btn:focus {
+    outline: none;
+  }
+
+  
+  /* Estilo adicional para el botón de edición */
+  .menu-edicion {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 10px;
+  }
+  
+  .menu-edicion label,
+  .menu-edicion input,
+  .menu-edicion select,
+  .menu-edicion button {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .editar-linea-btn {
+    background-color: #ff732d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    align-self: flex-start;
+    margin-top: 25px;
+    border-radius: 4px;
+  }
+  
+  .editar-linea-btn:hover {
+    background-color: #ff5722;
+  }
+
+  .editar-estado{
+    background-color: #ff732d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    align-self: flex-start;
+    border-radius: 4px;
+  }
+  
+  .editar-estado:hover {
+    background-color: #ff5722;
+  }
+
+  .button-bo{
+    margin: 10px;
+  }
+  
+  
+  
+  

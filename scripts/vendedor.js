@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
   
     accesoVendedorForm.addEventListener("submit", async function(event) {
         event.preventDefault();
+        document.getElementById("loader-vendedor").style.display = "block";
 
         const vendedorDNI = document.getElementById("vendedor-dni").value;
 
@@ -15,29 +16,59 @@ document.addEventListener("DOMContentLoaded", function() {
         // Limpia el contenido anterior antes de mostrar las nuevas ventas
         ventasVendedor.innerHTML = "";
 
+        const ventasSnapshot = await getDocs(ventasCollection);
+        const ventasArray = ventasSnapshot.docs.map(doc => doc.data());    
+        ventasArray.sort((ventaA, ventaB) => {
+            // Parsea las fechas en formato "YYYY-MM-DD" y compáralas
+            const fechaA = new Date(ventaA.fecha);
+            const fechaB = new Date(ventaB.fecha);
+    
+            // Si las fechas son iguales, compara por hora
+            if (fechaA.getTime() === fechaB.getTime()) {
+                const horaA = ventaA.hora.split(":");
+                const horaB = ventaB.hora.split(":");
+                
+                // Compara las horas en formato "HH:MM:SS"
+                if (horaA[0] !== horaB[0]) {
+                    return horaB[0] - horaA[0];
+                } else if (horaA[1] !== horaB[1]) {
+                    return horaB[1] - horaA[1];
+                } else {
+                    return horaB[2] - horaA[2];
+                }
+            }
+    
+            // Compara las fechas en orden cronológico descendente
+            return fechaB - fechaA;
+        });
+
         if (ventasDelVendedor.length === 0) {
             ventasVendedor.textContent = "No se encontraron ventas para este vendedor.";
+            document.getElementById("loader-vendedor").style.display = "none";
         } else {
             ventasDelVendedor.forEach(venta => {
                 const ventaInfoContainer = document.createElement("div");
                 ventaInfoContainer.classList.add("venta-info-container");
                 ventaInfoContainer.setAttribute("data-id", venta.id);
-
+                document.getElementById("loader-vendedor").style.display = "none";
                 const ventaInfo = document.createElement("div");
                 ventaInfo.classList.add("venta-info");
                 ventaInfo.innerHTML = `
-                    <h3>Venta ID: ${venta.id}</h3>
-                    <p>Línea: ${venta.linea.numero}</p>
+                    <h3>Línea: ${venta.linea.numero}</h3>
                     <p>Cliente: ${venta.cliente.nombre}</p>
                     <p>Estado: ${venta.estado}</p>
                     <div class="detalles-venta hidden" id="detalles-${venta.id}">
                     <!-- Aquí se mostrarán los detalles cuando se despliegue -->
                     </div>
-                    <button class="ver-detalles-btn" data-id="${venta.id}">▼</button>
+                    <button class="ver-detalles-btn" data-id="${venta.id}">
+                        <span class="rotatable-icon">▼</span>
+                    </button>
+
                 `;
 
                 if (venta.estado === "ERROR DE LINEA" || venta.estado === "RETRABAJAR") {
                     const editarLineaBtn = document.createElement("button");
+                    editarLineaBtn.classList.add("editar-linea-btn")
                     editarLineaBtn.textContent = "Editar Línea";
                     editarLineaBtn.addEventListener("click", function() {
                         toggleMenuEdicion(venta);
@@ -185,20 +216,24 @@ async function mostrarVentas() {
         const venta = doc.data();
 
         const ventaInfo = document.createElement("div");
+        ventaInfo.classList.add("venta-info-container");
+        ventaInfo.setAttribute("data-id", venta.id);
         ventaInfo.innerHTML =  `
-        <h3>Venta ID: ${venta.id}</h3>
+        <h3>Línea: ${venta.linea.numero}</h3>
         <p>Cliente: ${venta.cliente.nombre}</p>
-        <p>Línea: ${venta.linea.numero}</p>
         <p>Estado: ${venta.estado}</p>
         <div class="detalles-venta hidden" id="detalles-${venta.id}">
         <!-- Aquí se mostrarán los detalles cuando se despliegue -->
         </div>
-        <button class="ver-detalles-btn" data-id="${venta.id}">▼</button>
+        <button class="ver-detalles-btn" data-id="${venta.id}">
+            <span class="rotatable-icon">▼</span>
+        </button>
     `;
 
         if (venta.estado === "ERROR DE LINEA" || venta.estado === "RETRABAJAR") {
             const editarLineaBtn = document.createElement("button");
             editarLineaBtn.textContent = "Editar Línea";
+            editarLineaBtn.classList.add("editar-linea-btn")
             editarLineaBtn.addEventListener("click", function() {
                 toggleMenuEdicion(venta);
             });
@@ -222,7 +257,8 @@ async function mostrarVentas() {
             if (detallesVenta.classList.contains("hidden")) {
                 detallesVenta.innerHTML += `
                     <div class="detalles-venta">
-                        <p>Fecha y Hora: ${venta.fechaHora}</p>
+                        <p>Fecha: ${venta.fecha}</p>
+                        <p>Hora: ${venta.hora}</p>
                         <p>DNI: ${venta.cliente.dni}</p>
                         <p>Email: ${venta.cliente.mail}</p>
                         <p>Contacto: ${venta.cliente.contacto}</p>

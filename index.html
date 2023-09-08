@@ -42,10 +42,13 @@
                 <label for="vendedor-dni">DNI del Vendedor:</label>
                 <input type="text" id="vendedor-dni" required><br>
             </div>
-            <button type="submit">Registrar Venta</button>
-            <a href="paginas/vendedor.html">Acceder a tus Ventas</a>
+            <div class="botonera">
+                <button type="submit">Registrar Venta</button>
+                <a href="paginas/vendedor.html" class="button">Acceder a tus Ventas</a>
+                <div id="loader" class="loader"></div>
+            </div>
         </form>
-        <div id="mensaje-error" class="error-message"></div>
+        <div id="mensaje-error" class="error-message" style="display: none;"></div>
     </div>
     <script type="module" src="script.js"></script>
 </body>

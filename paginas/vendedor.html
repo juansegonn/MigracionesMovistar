@@ -13,7 +13,10 @@
         <form id="acceso-vendedor-form">
             <label for="vendedor-dni">Ingresa tu DNI:</label>
             <input type="text" id="vendedor-dni" required>
-            <button type="submit">Acceder</button>
+            <div class="botonera">
+                <button type="submit">Acceder</button>
+                <div id="loader-vendedor" class="loader-vendedor"></div>
+            </div>
         </form>
         <div id="ventas-vendedor" class="section">
             <!-- Aquí se mostrarán las ventas del vendedor -->

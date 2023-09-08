@@ -24,52 +24,62 @@ document.addEventListener("DOMContentLoaded", async function() {
         // Contraseña incorrecta o cancelada, mostrar mensaje de acceso denegado
         alert("Acceso denegado.");
     }
-    
     const filtroForm = document.getElementById("filtro-form");
     const ventasBO = document.getElementById("ventas-bo");
-
+    
     const ventasSnapshot = await getDocs(ventasCollection);
     const ventasArray = ventasSnapshot.docs.map(doc => doc.data());
+    ventasArray.sort((ventaA, ventaB) => {
+        // Parsea las fechas en formato "YYYY-MM-DD" y compáralas
+        const fechaA = new Date(ventaA.fecha);
+        const fechaB = new Date(ventaB.fecha);
 
+        // Si las fechas son iguales, compara por hora
+        if (fechaA.getTime() === fechaB.getTime()) {
+            const horaA = ventaA.hora.split(":");
+            const horaB = ventaB.hora.split(":");
+            
+            // Compara las horas en formato "HH:MM:SS"
+            if (horaA[0] !== horaB[0]) {
+                return horaB[0] - horaA[0];
+            } else if (horaA[1] !== horaB[1]) {
+                return horaB[1] - horaA[1];
+            } else {
+                return horaB[2] - horaA[2];
+            }
+        }
+
+        // Compara las fechas en orden cronológico descendente
+        return fechaB - fechaA;
+    });
     mostrarVentasBO(ventasArray);
 
-  // Función para convertir una cadena de fecha "6/9/2023, 10:08:26" en un objeto Date
-function parseFechaString(fechaString) {
-    const [fechaPart, horaPart] = fechaString.split(", ");
-    const [dia, mes, anio] = fechaPart.split("/");
-    const [hora, minuto, segundo] = horaPart.split(":");
-    return new Date(anio, mes - 1, dia, hora, minuto, segundo);
-}
+    filtroForm.addEventListener("submit", function(event) {
+        event.preventDefault();
 
-filtroForm.addEventListener("submit", function(event) {
-    event.preventDefault();
+        const filtroNombreVendedor = document.getElementById("filtro-nombre-vendedor").value.toLowerCase();
+        const filtroDNIVendedor = document.getElementById("filtro-dni-vendedor").value.toLowerCase();
+        const filtroLinea = document.getElementById("filtro-linea").value.toLowerCase();
+        const filtroDNICliente = document.getElementById("filtro-dni-cliente").value.toLowerCase();
+        const filtroFecha = document.getElementById("filtro-fecha").value; 
 
-    const filtroNombreVendedor = document.getElementById("filtro-nombre-vendedor").value.toLowerCase();
-    const filtroDNIVendedor = document.getElementById("filtro-dni-vendedor").value.toLowerCase();
-    const filtroLinea = document.getElementById("filtro-linea").value.toLowerCase();
-    const filtroDNICliente = document.getElementById("filtro-dni-cliente").value.toLowerCase();
-    const filtroFecha = document.getElementById("filtro-fecha").value; // Este valor es en formato "YYYY-MM-DD"
+        const ventasFiltradas = ventasArray.filter(venta => {
+            const cumpleFiltroNombreVendedor = venta.vendedor.nombre.toLowerCase().includes(filtroNombreVendedor);
+            const cumpleFiltroDNIVendedor = venta.vendedor.dni.toLowerCase().includes(filtroDNIVendedor);
+            const cumpleFiltroLinea = venta.linea.numero.toLowerCase().includes(filtroLinea);
+            const cumpleFiltroDNICliente = venta.cliente.dni.toLowerCase().includes(filtroDNICliente);
+            const cumpleFiltroFecha = venta.fecha.includes(filtroFecha); 
 
-    // Convertir la fecha de filtro a un objeto Date
-    const filtroFechaDate = new Date(filtroFecha);
+            console.log(filtroFecha)
+            console.log(cumpleFiltroFecha)
 
-    const ventasFiltradas = ventasArray.filter(venta => {
-        const cumpleFiltroNombreVendedor = venta.vendedor.nombre.toLowerCase().includes(filtroNombreVendedor);
-        const cumpleFiltroDNIVendedor = venta.vendedor.dni.toLowerCase().includes(filtroDNIVendedor);
-        const cumpleFiltroLinea = venta.linea.numero.toLowerCase().includes(filtroLinea);
-        const cumpleFiltroDNICliente = venta.cliente.dni.toLowerCase().includes(filtroDNICliente);
+            return cumpleFiltroNombreVendedor && cumpleFiltroDNIVendedor && cumpleFiltroLinea && cumpleFiltroDNICliente && cumpleFiltroFecha;
+        });
 
-        // Convertir la fecha de la venta a un objeto Date
-        const fechaVenta = parseFechaString(venta.fechaHora);
-
-        // Verificar si la fecha de la venta coincide con la fecha de filtro
-        const cumpleFiltroFecha = filtroFechaDate ? fechaVenta.toISOString().split("T")[0] === filtroFechaDate.toISOString().split("T")[0] : true;
-
-        return cumpleFiltroNombreVendedor && cumpleFiltroDNIVendedor && cumpleFiltroLinea && cumpleFiltroDNICliente && cumpleFiltroFecha;
+        mostrarVentasBO(ventasFiltradas);
     });
 
-    mostrarVentasBO(ventasFiltradas);
-});
+
 
     function mostrarVentasBO(ventas) {
         ventasBO.innerHTML = "";
@@ -79,19 +89,21 @@ filtroForm.addEventListener("submit", function(event) {
         } else {
             ventas.forEach(venta => {
                 const ventaInfo = document.createElement("div");
-                ventaInfo.classList.add("venta-info");
+                ventaInfo.classList.add("venta-info-container");
                 ventaInfo.innerHTML = `
-                    <h3>Venta ID: ${venta.id}</h3>
+                    <h3>Línea: ${venta.linea.numero}</h3>
+                    <p>Venta ID: ${venta.id}</p>
                     <p>Vendedor: ${venta.vendedor.nombre} (DNI: ${venta.vendedor.dni})</p> 
                     <p>DNI: ${venta.cliente.dni}</p>
-                    <p>Línea: ${venta.linea.numero}</p>
                     <p>Estado: ${venta.estado}</p>
                     <div class="detalles-venta hidden" id="detalles-${venta.id}">
                     <!-- Aquí se mostrarán los detalles cuando se despliegue -->
                     </div>
+                    <div class="detalles-venta hidden"}">
                     <button class="ver-detalles-btn" data-id="${venta.id}">▼</button>
                     <label for="estado-${venta.id}">Cambiar Estado:</label>
                     <select id="estado-${venta.id}">
+                    </div>
                     <option value="ESPERANDO APROBACION BO">ESPERANDO APROBACION BO</option>
                     <option value="CARGADO EN T3">CARGADO EN T3</option>
                     <option value="APROBADA">APROBADA</option>
@@ -100,10 +112,11 @@ filtroForm.addEventListener("submit", function(event) {
                     <option value="ANULADA GESTION MAL CARGADA">ANULADA GESTION MAL CARGADA</option>
                     <option value="ANULADA CLIENTE DECISTE">ANULADA CLIENTE DECISTE</option>
                     </select>
-                    <button class="cambiar-estado-btn" data-id="${venta.id}">Cambiar</button>
+                    <button class="editar-estado" data-id="${venta.id}">Cambiar</button>
+                    <div id="mensaje-error" class="error-message" style="display: none;"></div>
                 `;
 
-                const cambiarEstadoBtn = ventaInfo.querySelector(".cambiar-estado-btn");
+                const cambiarEstadoBtn = ventaInfo.querySelector(".editar-estado");
                 cambiarEstadoBtn.addEventListener("click", function() {
                     const nuevoEstado = document.getElementById(`estado-${venta.id}`).value;
                     cambiarEstadoVenta(venta.id, nuevoEstado); // Utiliza venta.id en lugar de venta.id_
@@ -148,10 +161,11 @@ function toggleDetallesVenta(venta) {
             detallesVenta.innerHTML += `
                 <div class="detalles-venta">
                     <p>Cliente: ${venta.cliente.nombre}</p>
-                    <p>Fecha y Hora: ${venta.fechaHora}</p>
+                    <p>Fecha: ${venta.fecha}</p>
+                    <p>Hora: ${venta.hora}</p>
                     <p>Email: ${venta.cliente.mail}</p>
                     <p>Contacto: ${venta.cliente.contacto}</p>
-                    <p>Linea de Llamada: ${venta.cliente.lineaLlamado}</p>
+                    <p>Linea de Llamada: ${venta.cliente.linea}</p>
                     <p>Plan: ${venta.linea.plan}</p>
                 </div>
             `;

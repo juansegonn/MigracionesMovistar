@@ -5,11 +5,12 @@ import { getFirestore, collection, addDoc, query, where, doc, setDoc, getDoc, ge
 const firebaseConfig = {
     apiKey: "AIzaSyBA8hjXbjBwpIsFErj5EylXnSXhmmAk_3M",
     authDomain: "migracionesmovistar-6c8ff.firebaseapp.com",
+    databaseURL: "https://migracionesmovistar-6c8ff-default-rtdb.firebaseio.com",
     projectId: "migracionesmovistar-6c8ff",
     storageBucket: "migracionesmovistar-6c8ff.appspot.com",
     messagingSenderId: "918743184547",
     appId: "1:918743184547:web:46506455363d1a790dfb16"
-};
+  };
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
@@ -26,6 +27,8 @@ const mensajeError = document.getElementById("mensaje-error");
 
 ventaForm.addEventListener("submit", async function(event) {
     event.preventDefault();
+    document.getElementById("loader").style.display = "block";
+
 
     // Datos del Cliente
     const clienteNombre = document.getElementById("cliente-nombre").value;
@@ -38,6 +41,7 @@ ventaForm.addEventListener("submit", async function(event) {
     const lineaNumero = document.getElementById("linea-numero").value;
     const lineaPlan = document.getElementById("linea-plan").value;
 
+
     // Verificar si ya existe una venta con el mismo número de línea
     const q = query(ventasCollection, where("linea.numero", "==", lineaNumero));
     const querySnapshot = await getDocs(q);
@@ -45,32 +49,42 @@ ventaForm.addEventListener("submit", async function(event) {
     if (!querySnapshot.empty) {
         // Ya existe al menos una venta con el mismo número de línea
         mensajeError.textContent = "Ya existe una venta con este número de línea.";
+        mensajeError.style.display = "block";
+        document.getElementById("loader").style.display = "none";
         return;
     }
-
-    const vendedoresBase = [
-        { dni: "12345678", nombre: "Vendedor1" },
-        { dni: "87654321", nombre: "Vendedor2" }
-    ];
 
     // Datos del Vendedor
     const vendedorDNI = document.getElementById("vendedor-dni").value;
-    const vendedorEncontrado = await vendedoresBase.find(v => v.dni === vendedorDNI);
+    // Cargamos los vendedores desde el archivo CSV
+    const vendedores = await cargarVendedoresDesdeCSV();
 
+    // Buscamos el vendedor por DNI en la lista de vendedores cargados desde el CSV
+    const vendedorEncontrado = vendedores.find(v => v.dni === vendedorDNI);
+    
     if (!vendedorEncontrado) {
         mensajeError.textContent = "El DNI del vendedor no es válido.";
+        mensajeError.style.display = "block";
+        document.getElementById("loader").style.display = "none";
         return;
     }
+    
 
     // Agregar fecha y hora actual
-    const fechaHoraActual = new Date().toLocaleString();
+const fechaHoraActual = new Date();
+const anio = fechaHoraActual.getFullYear(); // Obtener el año (YYYY)
+const mes = (fechaHoraActual.getMonth() + 1).toString().padStart(2, '0'); // Obtener el mes (MM)
+const dia = fechaHoraActual.getDate().toString().padStart(2, '0'); // Obtener el día (DD)
 
-    // Agregar el campo id
-    const id = await doc(ventasCollection).id;
+// Formatear la fecha en el formato "YYYY-MM-DD"
+const fechaFormateada = `${anio}-${mes}-${dia}`;
 
+// Agregar el campo id
+const id = await doc(ventasCollection).id;
     const nuevaVenta = {
         id,
-        fechaHora: fechaHoraActual,
+        fecha: fechaFormateada,
+        hora: fechaHoraActual.toLocaleTimeString(),
         cliente: {
             nombre: clienteNombre,
             dni: clienteDNI,
@@ -94,6 +108,11 @@ ventaForm.addEventListener("submit", async function(event) {
     await setDoc(docRef, nuevaVenta); // Utilizamos setDoc en lugar de addDoc
 
     mensajeError.textContent = "Venta registrada con éxito.";
+    document.getElementById("loader").style.display = "none";
+    mensajeError.style.display = "block";
+    setTimeout(function() {
+        mensajeError.style.display = "none";
+      }, 5000);
 
     // Obtener la venta del documento
     const ventaSnapshot = await getDoc(docRef);
@@ -104,6 +123,42 @@ ventaForm.addEventListener("submit", async function(event) {
 
     ventaForm.reset();
 });
+
+// Función para cargar vendedores desde un archivo CSV ubicado en la raíz del proyecto
+async function cargarVendedoresDesdeCSV() {
+    return new Promise((resolve, reject) => {
+        const archivoCSV = "dotacion.csv"; // Nombre del archivo CSV en la raíz del proyecto
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", archivoCSV);
+
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                const contenidoCSV = xhr.responseText;
+                const lineasCSV = contenidoCSV.split('\n');
+                const vendedores = [];
+
+                for (let i = 1; i < lineasCSV.length; i++) {
+                    const linea = lineasCSV[i].trim();
+                    if (linea) {
+                        const [nombre, dni, idAzo] = linea.split(",");
+                        vendedores.push({ nombre, dni, idAzo });
+                    }
+                }
+
+                resolve(vendedores);
+            } else {
+                reject(new Error(`Error al cargar el archivo CSV: ${xhr.statusText}`));
+            }
+        };
+
+        xhr.onerror = () => {
+            reject(new Error("Error de red al cargar el archivo CSV"));
+        };
+
+        xhr.send();
+    });
+}
 
 function mostrarVenta(venta) {
     // Implementa la lógica para mostrar la venta en tu interfaz de usuario aquí
