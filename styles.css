@@ -280,6 +280,14 @@ body {
   .button-bo{
     margin: 10px;
   }
+
+  .fecha{
+    display: flex;
+  }
+
+  .fecha-select{
+    margin: 3px;
+  }
   
   
   
