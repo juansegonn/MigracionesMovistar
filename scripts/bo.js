@@ -124,7 +124,6 @@ document.addEventListener("DOMContentLoaded", async function() {
                     <h3>Línea: ${venta.linea.numero}</h3>
                     <p>Venta ID: ${venta.id}</p>
                     <p>Vendedor: ${venta.vendedor.nombre} (DNI: ${venta.vendedor.dni})</p> 
-                    <p>DNI del Cliente: ${venta.cliente.dni}</p>
                     <p>Estado: ${venta.estado}</p>
                     <div class="detalles-venta hidden" id="detalles-${venta.id}">
                     <!-- Aquí se mostrarán los detalles cuando se despliegue -->
@@ -141,15 +140,22 @@ document.addEventListener("DOMContentLoaded", async function() {
                     <option value="ANULADA GESTION MAL CARGADA">ANULADA GESTION MAL CARGADA</option>
                     <option value="ANULADA CLIENTE DECISTE">ANULADA CLIENTE DECISTE</option>
                     </select>
+                    <div class="botonera">
                     <button class="editar-estado" data-id="${venta.id}">Cambiar Estado</button>
                     <button class="editar-linea-btn" data-id="${venta.id}">Editar Linea</button>
                     <button class="anular-venta" data-id="${venta.id}">Anular Venta</button>
-                    <div id="mensaje-error" class="error-message" style="display: none;"></div>
+                    <div id="loader-vendedor-${venta.id}" class="loader-vendedor"></div>
+                    </div>
                 `;
 
                 const cambiarEstadoBtn = ventaInfo.querySelector(".editar-estado");
                 cambiarEstadoBtn.addEventListener("click", function() {
                     const nuevoEstado = document.getElementById(`estado-${venta.id}`).value;
+                    const loaderId = `loader-vendedor-${venta.id}`;
+                    const loader = document.getElementById(loaderId);
+                    if (loader) {
+                        loader.style.display = "block";
+                    }    
                     cambiarEstadoVenta(venta.id, nuevoEstado); // Utiliza venta.id en lugar de venta.id_
                 });
 
@@ -188,17 +194,22 @@ document.addEventListener("DOMContentLoaded", async function() {
             anularVenta(ventaId);
         } else {
             // Contraseña incorrecta, muestra un mensaje de error
-            alert("Contraseña incorrecta. No se anuló la venta.");
+            mostrarMensajeError("Contraseña incorrecta. No se anuló la venta.")
         }
     }
     
     async function anularVenta(ventaId) {
         const ventaRef = doc(database, "ventas", ventaId);
+        const loaderId = `loader-vendedor-${ventaId}`;
+        const loader = document.getElementById(loaderId);
+        if (loader) {
+            loader.style.display = "block";
+        }  
     
         try {
             await deleteDoc(ventaRef);
             console.log("Venta anulada correctamente.");
-    
+            mostrarMensajeExito("Venta anulada correctamente.")
             // Obtén nuevamente las ventas actualizadas después de eliminar una venta
             const ventasSnapshot = await getDocs(ventasCollection);
             const ventasArray = ventasSnapshot.docs.map(doc => doc.data());
@@ -206,7 +217,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             mostrarVentasBO(ventasArray); // Llama a mostrarVentasBO con las ventas actualizadas
         } catch (error) {
             console.error("Error al anular la venta:", error);
-            alert("Error al anular la venta. Por favor, inténtalo nuevamente.");
+            mostrarMensajeError("Error al anular la venta. Por favor, inténtalo nuevamente.")
         }
     }
     
@@ -216,13 +227,14 @@ document.addEventListener("DOMContentLoaded", async function() {
         try {
             await updateDoc(ventaRef, { estado: nuevoEstado });
             console.log("Estado de venta actualizado correctamente.");
-    
+            mostrarMensajeExito("Estado de venta actualizado correctamente.")
             // Después de actualizar, volvemos a obtener los datos de Firestore y actualizar la página
             const ventasSnapshot = await getDocs(ventasCollection);
             const ventasArray = ventasSnapshot.docs.map(doc => doc.data());
             mostrarVentasBO(ventasArray);
         } catch (error) {
             console.error("Error al actualizar el estado de la venta:", error);
+            mostrarMensajeError("Error al actualizar el estado de la venta")
         }
     }
 
@@ -244,7 +256,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             const formularioEdicion = document.createElement("form");
             formularioEdicion.innerHTML = `
                     <label for="cliente-linea">Línea de Contacto (como figura en mitrol):</label>
-                    <input type="text" id="cliente-linea" value="${venta.cliente.clienteLlamado}"><br>
+                    <input type="text" id="cliente-linea" value="${venta.cliente.llamado}"><br>
                     <label for="nombre">Nombre:</label>
                     <input type="text" id="nombre" value="${venta.cliente.nombre}"><br>
                     <label for="dni">DNI:</label>
@@ -266,6 +278,11 @@ document.addEventListener("DOMContentLoaded", async function() {
 
             formularioEdicion.addEventListener("submit", async function(event) {
                 event.preventDefault();
+                const loaderId = `loader-vendedor-${venta.id}`;
+                const loader = document.getElementById(loaderId);
+                if (loader) {
+                    loader.style.display = "block";
+                }  
                 const numeroLineaInput = document.getElementById("linea-numero");
                 const nuevoNumeroLinea = numeroLineaInput.value;
             
@@ -273,10 +290,11 @@ document.addEventListener("DOMContentLoaded", async function() {
                 const lineaExists = await verificaNumeroLineaExiste(nuevoNumeroLinea, venta.id);
             
                 if (lineaExists) {
-                    alert("Este número de línea ya está registrado.");
+                    mostrarMensajeError("Este número de línea ya está registrado.")
                 } else {
                 // Actualiza los datos de la venta con la información modificada
                 venta.cliente.nombre = document.getElementById("nombre").value;
+                venta.cliente.llamado = document.getElementById("cliente-linea").value;
                 venta.cliente.dni = document.getElementById("dni").value;
                 venta.cliente.mail = document.getElementById("mail").value;
                 venta.cliente.contacto = document.getElementById("contacto").value;
@@ -289,6 +307,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
                 // Limpia el menú de edición
                 menuEdicion.remove();
+                mostrarMensajeExito("La línea se edito exitosamente")
 
                 // Llama a mostrarVentas después de un breve retraso
                 setTimeout(() => {
@@ -327,7 +346,29 @@ document.addEventListener("DOMContentLoaded", async function() {
     
 });
 
+function mostrarMensajeError(mensaje) {
+    Toastify({
+        text: mensaje,
+        duration: 5000,
+        close: true,
+        gravity: "top-left", // Cambia la posición a la esquina superior derecha
+        style: {
+            width: "300px", // Define un ancho máximo para la notificación
+        },
+    }).showToast();
+}
 
+function mostrarMensajeExito(mensaje) {
+    Toastify({
+        text: mensaje,
+        duration: 5000,
+        close: true,
+        gravity: "top-left", // Cambia la posición a la esquina superior derecha
+        style: {
+            width: "300px", // Define un ancho máximo para la notificación
+        },
+    }).showToast();
+}
 
 function toggleDetallesVenta(venta) {
     const detallesVenta = document.getElementById(`detalles-${venta.id}`);
@@ -336,13 +377,16 @@ function toggleDetallesVenta(venta) {
         if (detallesVenta.classList.contains("hidden")) {
             detallesVenta.innerHTML += `
                 <div class="detalles-venta">
+                <div class="detalles-venta">
                     <p>Cliente: ${venta.cliente.nombre}</p>
+                    <p>DNI: ${venta.cliente.dni}</p>
+                    <p>Email: ${venta.cliente.mail}</p>
+                    <p>Linea Alternativa: ${venta.cliente.contacto}</p>
+                    <p>Linea de Llamada: ${venta.cliente.llamado}</p>
+                    <p>Plan: ${venta.linea.plan}</p>
                     <p>Fecha: ${venta.fecha}</p>
                     <p>Hora: ${venta.hora}</p>
-                    <p>Email: ${venta.cliente.mail}</p>
-                    <p>Contacto: ${venta.cliente.contacto}</p>
-                    <p>Linea de Llamada: ${venta.cliente.linea}</p>
-                    <p>Plan: ${venta.linea.plan}</p>
+                </div>
                 </div>
             `;
             detallesVenta.classList.remove("hidden");

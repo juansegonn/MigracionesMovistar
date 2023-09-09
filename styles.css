@@ -73,22 +73,14 @@ body {
     cursor: pointer;
     align-self: flex-start;
     border-radius: 4px;
+    margin-left: 5px;
   }
 
   .anular-venta:hover{
     background-color: #ff5722;
   }
   
-  .error-message {
-    background-color: #ff5722;
-    color: #fff;
-    border-radius: 5px;
-    padding: 10px;
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-   a.button {
+  a.button {
     background-color: #ff732d;
     color: #fff;
     border: none;
@@ -107,7 +99,11 @@ body {
 
   .botonera{
     display: flex;
+    height: 30px;
+  }
 
+  .botonera-venta{
+    display: flex;
   }
 
   .loader {
@@ -178,7 +174,7 @@ body {
   }
 
   h3{
-    margin: 0;
+    margin: 5px 0px 10px 5px;
   }
   
   #acceso-vendedor-form {
@@ -197,7 +193,7 @@ body {
   }
   
   p{
-    margin: 5px;
+    margin: 5px 0px 10px 5px;
   }
   
   /* Estilos para las tarjetas de ventas */
@@ -215,6 +211,11 @@ body {
 
   .detalles-venta p{
     margin: 5px 0px 10px 5px;
+  }
+
+  .detalles-venta-vendedor{
+    display: flex;
+    flex-direction: column;
   }
   
   .ver-detalles-btn {
@@ -255,7 +256,6 @@ body {
     padding: 8px 12px;
     cursor: pointer;
     align-self: flex-start;
-    margin-top: 25px;
     border-radius: 4px;
   }
   
@@ -271,6 +271,7 @@ body {
     cursor: pointer;
     align-self: flex-start;
     border-radius: 4px;
+    margin-right: 5px;
   }
   
   .editar-estado:hover {
@@ -279,6 +280,14 @@ body {
 
   .button-bo{
     margin: 10px;
+  }
+
+  .fecha{
+    display: flex;
+  }
+
+  .fecha-select{
+    margin: 3px;
   }
   
   

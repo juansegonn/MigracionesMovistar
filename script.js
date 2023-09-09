@@ -1,8 +1,8 @@
 import { getFirestore, collection, addDoc, query, where, doc, setDoc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js";
+import { ventasCollection } from "./firebase.js";
 
 // Eventos
 const ventaForm = document.getElementById("venta-form");
-const mensajeError = document.getElementById("mensaje-error");
 
 ventaForm.addEventListener("submit", async function(event) {
     event.preventDefault();
@@ -22,8 +22,7 @@ ventaForm.addEventListener("submit", async function(event) {
     
     // Verificar si tiene 10 digitos
     if (lineaNumero.length !== 10) {
-        mensajeError.textContent = "El número de línea debe tener exactamente 10 dígitos.";
-        mensajeError.style.display = "block";
+        mostrarMensajeError("El número de línea debe tener exactamente 10 dígitos.");
         document.getElementById("loader").style.display = "none";
         return;
     }
@@ -33,13 +32,10 @@ ventaForm.addEventListener("submit", async function(event) {
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-        // Ya existe al menos una venta con el mismo número de línea
-        mensajeError.textContent = "Ya existe una venta con este número de línea.";
-        mensajeError.style.display = "block";
+        mostrarMensajeError("Ya existe una venta con este número de línea.");
         document.getElementById("loader").style.display = "none";
         return;
     }
-
 
     // Datos del Vendedor
     const vendedorDNI = document.getElementById("vendedor-dni").value;
@@ -50,8 +46,7 @@ ventaForm.addEventListener("submit", async function(event) {
     const vendedorEncontrado = vendedores.find(v => v.dni === vendedorDNI);
     
     if (!vendedorEncontrado) {
-        mensajeError.textContent = "El DNI del vendedor no es válido.";
-        mensajeError.style.display = "block";
+        mostrarMensajeError("El DNI del vendedor no es válido.");
         document.getElementById("loader").style.display = "none";
         return;
     }
@@ -77,7 +72,7 @@ ventaForm.addEventListener("submit", async function(event) {
                 dni: clienteDNI,
                 mail: clienteMail,
                 contacto: clienteContacto,
-                linea: clienteLlamado
+                llamado: clienteLlamado
             },
             linea: {
                 numero: lineaNumero,
@@ -94,12 +89,8 @@ ventaForm.addEventListener("submit", async function(event) {
     const docRef = doc(ventasCollection, id); // Obtener una referencia al documento recién creado
     await setDoc(docRef, nuevaVenta); // Utilizamos setDoc en lugar de addDoc
 
-    mensajeError.textContent = "Venta registrada con éxito.";
+    mostrarMensajeExito("Venta registrada con éxito.");
     document.getElementById("loader").style.display = "none";
-    mensajeError.style.display = "block";
-    setTimeout(function() {
-        mensajeError.style.display = "none";
-      }, 5000);
 
     // Obtener la venta del documento
     const ventaSnapshot = await getDoc(docRef);
@@ -145,6 +136,30 @@ async function cargarVendedoresDesdeCSV() {
 
         xhr.send();
     });
+}
+
+function mostrarMensajeError(mensaje) {
+    Toastify({
+        text: mensaje,
+        duration: 5000,
+        close: true,
+        gravity: "top-left", // Cambia la posición a la esquina superior derecha
+        style: {
+            width: "300px", // Define un ancho máximo para la notificación
+        },
+    }).showToast();
+}
+
+function mostrarMensajeExito(mensaje) {
+    Toastify({
+        text: mensaje,
+        duration: 5000,
+        close: true,
+        gravity: "top-left", // Cambia la posición a la esquina superior derecha
+        style: {
+            width: "300px", // Define un ancho máximo para la notificación
+        },
+    }).showToast();
 }
 
 function mostrarVenta(venta) {

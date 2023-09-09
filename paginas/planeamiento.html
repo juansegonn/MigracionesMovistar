@@ -19,10 +19,12 @@
             <input type="text" id="filtro-linea">
             <label for="filtro-dni-cliente">Filtrar por DNI de Cliente:</label>
             <input type="text" id="filtro-dni-cliente">
-            <label for="filtro-fecha-desde">Filtrar por Fecha desde:</label>
-            <input type="date" id="filtro-fecha-desde">
-            <label for="filtro-fecha-hasta">Filtrar por Fecha hasta:</label>
-            <input type="date" id="filtro-fecha-hasta">
+            <div class="fecha">
+                <label class="fecha-select" for="filtro-fecha-desde">Filtrar por Fecha desde:</label>
+                <input class="fecha-select" type="date" id="filtro-fecha-desde">
+                <label class="fecha-select" for="filtro-fecha-hasta"> hasta:</label>
+                <input class="fecha-select" type="date" id="filtro-fecha-hasta">
+            </div>
             <button type="submit" class="button-bo">Filtrar</button>
         </form>
         <div id="ventas-bo" class="section">

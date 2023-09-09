@@ -99,7 +99,6 @@ document.addEventListener("DOMContentLoaded", async function() {
                     <h3>Línea: ${venta.linea.numero}</h3>
                     <p>Venta ID: ${venta.id}</p>
                     <p>Vendedor: ${venta.vendedor.nombre} (DNI: ${venta.vendedor.dni})</p> 
-                    <p>DNI: ${venta.cliente.dni}</p>
                     <p>Estado: ${venta.estado}</p>
                     <div class="detalles-venta hidden" id="detalles-${venta.id}">
                     <!-- Aquí se mostrarán los detalles cuando se despliegue -->
@@ -127,12 +126,13 @@ function toggleDetallesVenta(venta) {
             detallesVenta.innerHTML += `
                 <div class="detalles-venta">
                     <p>Cliente: ${venta.cliente.nombre}</p>
-                    <p>Fecha: ${venta.fecha}</p>
-                    <p>Hora: ${venta.hora}</p>
+                    <p>DNI: ${venta.cliente.dni}</p>
                     <p>Email: ${venta.cliente.mail}</p>
-                    <p>Contacto: ${venta.cliente.contacto}</p>
+                    <p>Linea Alternativa: ${venta.cliente.contacto}</p>
                     <p>Linea de Llamada: ${venta.cliente.linea}</p>
                     <p>Plan: ${venta.linea.plan}</p>
+                    <p>Fecha: ${venta.fecha}</p>
+                    <p>Hora: ${venta.hora}</p>
                 </div>
             `;
             detallesVenta.classList.remove("hidden");

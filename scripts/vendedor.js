@@ -1,4 +1,4 @@
-import { getDocs, query, where, ventasCollection, updateDoc, doc } from "../firebase.js";
+import { getDocs, query, where, ventasCollection, updateDoc, doc, orderBy  } from "../firebase.js";
 
 document.addEventListener("DOMContentLoaded", function() {
     const accesoVendedorForm = document.getElementById("acceso-vendedor-form");
@@ -15,32 +15,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Limpia el contenido anterior antes de mostrar las nuevas ventas
         ventasVendedor.innerHTML = "";
-
-        const ventasSnapshot = await getDocs(ventasCollection);
-        const ventasArray = ventasSnapshot.docs.map(doc => doc.data());    
-        ventasArray.sort((ventaA, ventaB) => {
-            // Parsea las fechas en formato "YYYY-MM-DD" y compáralas
-            const fechaA = new Date(ventaA.fecha);
-            const fechaB = new Date(ventaB.fecha);
-    
-            // Si las fechas son iguales, compara por hora
-            if (fechaA.getTime() === fechaB.getTime()) {
-                const horaA = ventaA.hora.split(":");
-                const horaB = ventaB.hora.split(":");
-                
-                // Compara las horas en formato "HH:MM:SS"
-                if (horaA[0] !== horaB[0]) {
-                    return horaB[0] - horaA[0];
-                } else if (horaA[1] !== horaB[1]) {
-                    return horaB[1] - horaA[1];
-                } else {
-                    return horaB[2] - horaA[2];
-                }
-            }
-    
-            // Compara las fechas en orden cronológico descendente
-            return fechaB - fechaA;
-        });
 
         if (ventasDelVendedor.length === 0) {
             ventasVendedor.textContent = "No se encontraron ventas para este vendedor.";
@@ -93,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function() {
     async function consultarVentasPorVendedor(vendedorDNI) {
         const ventas = [];
 
-        // Consultar ventas utilizando Firestore
+        // Consultar ventas utilizando Firestore y ordenarlas por fecha en orden ascendente
         const q = query(ventasCollection, where("vendedor.dni", "==", vendedorDNI));
         const querySnapshot = await getDocs(q);
 
@@ -101,8 +75,33 @@ document.addEventListener("DOMContentLoaded", function() {
             ventas.push(doc.data());
         });
 
+        ventas.sort((ventaA, ventaB) => {
+            // Parsea las fechas en formato "YYYY-MM-DD" y compáralas
+            const fechaA = new Date(ventaA.fecha);
+            const fechaB = new Date(ventaB.fecha);
+
+            // Si las fechas son iguales, compara por hora
+            if (fechaA.getTime() === fechaB.getTime()) {
+                const horaA = ventaA.hora.split(":");
+                const horaB = ventaB.hora.split(":");
+
+                // Compara las horas en formato "HH:MM:SS"
+                if (horaA[0] !== horaB[0]) {
+                    return horaB[0] - horaA[0];
+                } else if (horaA[1] !== horaB[1]) {
+                    return horaB[1] - horaA[1];
+                } else {
+                    return horaB[2] - horaA[2];
+                }
+            }
+
+            // Compara las fechas en orden cronológico descendente
+            return fechaB - fechaA;
+        })
+
         return ventas;
     }
+
 
     const menusEdicion = {}; // Guarda los menús de edición abiertos por venta
 
@@ -256,7 +255,7 @@ async function mostrarVentas() {
         if (detallesVenta) { // Verificar si el elemento existe antes de continuar
             if (detallesVenta.classList.contains("hidden")) {
                 detallesVenta.innerHTML += `
-                    <div class="detalles-venta">
+                    <div class="detalles-venta-vendedor">
                         <p>Fecha: ${venta.fecha}</p>
                         <p>Hora: ${venta.hora}</p>
                         <p>DNI: ${venta.cliente.dni}</p>

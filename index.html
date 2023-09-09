@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Ventas</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="node_modules/toastify-js/src/toastify.css">
     <script type="module" src="firebase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body>
     <div class="container">
@@ -40,13 +42,12 @@
                     <option value="6GB">6 GB (Bono Desc -$5100)</option>
                 </select><br>
             </div>
-            <div class="botonera">
+            <div class="botonera-venta">
                 <button type="submit">Registrar Venta</button>
                 <a href="paginas/vendedor.html" class="button">Acceder a tus Ventas</a>
                 <div id="loader" class="loader"></div>
             </div>
         </form>
-        <div id="mensaje-error" class="error-message" style="display: none;"></div>
     </div>
     <script type="module" src="script.js"></script>
 </body>
