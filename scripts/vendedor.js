@@ -29,8 +29,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 ventaInfo.classList.add("venta-info");
                 ventaInfo.innerHTML = `
                     <h3>Línea: ${venta.linea.numero}</h3>
-                    <p>Cliente: ${venta.cliente.nombre}</p>
                     <p>Estado: ${venta.estado}</p>
+                    <p>Cliente: ${venta.cliente.nombre}</p>
                     <div class="detalles-venta hidden" id="detalles-${venta.id}">
                     <!-- Aquí se mostrarán los detalles cuando se despliegue -->
                     </div>
@@ -256,13 +256,13 @@ async function mostrarVentas() {
             if (detallesVenta.classList.contains("hidden")) {
                 detallesVenta.innerHTML += `
                     <div class="detalles-venta-vendedor">
-                        <p>Fecha: ${venta.fecha}</p>
-                        <p>Hora: ${venta.hora}</p>
-                        <p>DNI: ${venta.cliente.dni}</p>
-                        <p>Email: ${venta.cliente.mail}</p>
-                        <p>Contacto: ${venta.cliente.contacto}</p>
-                        <p>Plan: ${venta.linea.plan}</p>
-                        <p>Linea de Llamada: ${venta.cliente.linea}</p>
+                    <p>DNI: ${venta.cliente.dni}</p>
+                    <p>Email: ${venta.cliente.mail}</p>
+                    <p>Contacto: ${venta.cliente.contacto}</p>
+                    <p>Linea de Llamada: ${venta.cliente.linea}</p>
+                    <p>Plan: ${venta.linea.plan}</p>
+                    <p>Fecha: ${venta.fecha}</p>
+                    <p>Hora: ${venta.hora}</p>
                     </div>
                 `;
                 detallesVenta.classList.remove("hidden");
