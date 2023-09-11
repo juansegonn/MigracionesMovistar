@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
   
     accesoVendedorForm.addEventListener("submit", async function(event) {
         event.preventDefault();
-        document.getElementById("loader-vendedor").style.display = "block";
+        document.getElementById("loader").style.display = "block";
 
         const vendedorDNI = document.getElementById("vendedor-dni").value;
 
@@ -18,13 +18,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (ventasDelVendedor.length === 0) {
             ventasVendedor.textContent = "No se encontraron ventas para este vendedor.";
-            document.getElementById("loader-vendedor").style.display = "none";
+            document.getElementById("loader").style.display = "none";
         } else {
             ventasDelVendedor.forEach(venta => {
                 const ventaInfoContainer = document.createElement("div");
                 ventaInfoContainer.classList.add("venta-info-container");
                 ventaInfoContainer.setAttribute("data-id", venta.id);
-                document.getElementById("loader-vendedor").style.display = "none";
+                document.getElementById("loader").style.display = "none";
                 const ventaInfo = document.createElement("div");
                 ventaInfo.classList.add("venta-info");
                 ventaInfo.innerHTML = `

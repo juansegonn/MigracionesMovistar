@@ -85,11 +85,10 @@ body {
     color: #fff;
     border: none;
     border-radius: 5px;
-    padding: 20px;
+    padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    text-align: center;
-    display: inline-block;
+    margin-right: 10px;
     text-decoration: none;
   }
   
@@ -108,8 +107,8 @@ body {
 
   .loader {
     display: none;
-    width: 48px;
-    height: 48px;
+    width: 24px;
+    height: 24px;
     margin: 5px 5px 5px 10px;
     border-width: 3px;
     border-style: dashed solid  solid dotted;
@@ -123,35 +122,13 @@ body {
     content: '';  
     box-sizing: border-box;
     position: absolute;
-    left: 20px;
-    top: 31px;
-    border: 10px solid transparent;
-    border-right-color: #ff732d;
-    transform: rotate(-40deg);
-  }
-  .loader-vendedor{
-    display: none;
-    width: 24px;
-    height: 24px;
-    margin: 5px 5px 5px 10px;
-    border-width: 3px;
-    border-style: dashed solid  solid dotted;
-    border-color: #ff732d #ff732d transparent #ff732d;
-    border-radius: 50%;
-    position: relative;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-  }
-  .loader-vendedor::after {
-    content: '';  
-    box-sizing: border-box;
-    position: absolute;
     left: 3px;
     top: 15px;
     border: 7px solid transparent;
     border-right-color: #ff732d;
     transform: rotate(-40deg)
   }
+
   
   @keyframes rotation {
     0% {
@@ -202,6 +179,8 @@ body {
     padding: 15px;
     margin-bottom: 20px;
     background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
   }
   
   .venta-info {
@@ -211,6 +190,17 @@ body {
 
   .detalles-venta p{
     margin: 5px 0px 10px 5px;
+  }
+  .detalles-venta{
+  display: flex;
+  flex-direction: column;
+
+  }
+
+  .venta-pluggins{
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0 5px 5px;
   }
 
   .detalles-venta-vendedor{
@@ -229,6 +219,20 @@ body {
   }
   
   .ver-detalles-btn:focus {
+    outline: none;
+  }
+
+  .ver-detalles-bt {
+    color: #ff5722;
+    background-color: transparent;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    align-self: flex-end;
+    margin-top: -40px;
+  }
+  
+  .ver-detalles-bt:focus {
     outline: none;
   }
 

@@ -10,20 +10,16 @@ document.addEventListener("DOMContentLoaded", async function() {
     
         if (enteredPassword === null) {
             // El usuario canceló la ventana emergente
-            break;
+            window.location.href = "pagina-de-acceso-denegado.html"; // Redirigir a la página de acceso denegado
+            return;
         } else if (enteredPassword !== validPassword) {
             alert("Contraseña incorrecta. Inténtalo nuevamente.");
         }
     }
     
-    if (enteredPassword === validPassword) {
-        // Contraseña válida, mostrar contenido del Back Office
-        // Aquí puedes agregar tu lógica para mostrar el contenido del Back Office
-        alert("Contraseña correcta. Acceso permitido.");
-    } else {
-        // Contraseña incorrecta o cancelada, mostrar mensaje de acceso denegado
-        alert("Acceso denegado.");
-    }
+    // Contraseña válida, mostrar contenido del Back Office
+    // Aquí puedes agregar tu lógica para mostrar el contenido del Back Office
+    alert("Contraseña correcta. Acceso permitido.");
     const filtroForm = document.getElementById("filtro-form");
     const ventasBO = document.getElementById("ventas-bo");
     
@@ -125,11 +121,12 @@ document.addEventListener("DOMContentLoaded", async function() {
                     <p>Venta ID: ${venta.id}</p>
                     <p>Vendedor: ${venta.vendedor.nombre} (DNI: ${venta.vendedor.dni})</p> 
                     <p>Estado: ${venta.estado}</p>
-                    <div class="detalles-venta hidden" id="detalles-${venta.id}">
+                    <div class="detalles-venta-top hidden" id="detalles-${venta.id}">
                     <!-- Aquí se mostrarán los detalles cuando se despliegue -->
                     </div>
-                    <div class="detalles-venta hidden"}">
                     <button class="ver-detalles-btn" data-id="${venta.id}">▼</button>
+                    <div class="venta-pluggins">
+                    <div class="detalles-venta hidden">
                     <label for="estado-${venta.id}">Cambiar Estado:</label>
                     <select id="estado-${venta.id}">
                     </div>
@@ -144,7 +141,8 @@ document.addEventListener("DOMContentLoaded", async function() {
                     <button class="editar-estado" data-id="${venta.id}">Cambiar Estado</button>
                     <button class="editar-linea-btn" data-id="${venta.id}">Editar Linea</button>
                     <button class="anular-venta" data-id="${venta.id}">Anular Venta</button>
-                    <div id="loader-vendedor-${venta.id}" class="loader-vendedor"></div>
+                    <div id="loader-vendedor-${venta.id}" class="loader"></div>
+                    </div>
                     </div>
                 `;
 
