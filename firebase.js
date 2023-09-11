@@ -14,7 +14,7 @@ const firebaseConfig = {
   
 
 // Inicializar Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);;
 
 // Obtener una referencia a la base de datos de Firestore
 const database = getFirestore(app);
