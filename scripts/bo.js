@@ -349,7 +349,7 @@ function mostrarMensajeError(mensaje) {
         text: mensaje,
         duration: 5000,
         close: true,
-        gravity: "top-left", // Cambia la posición a la esquina superior derecha
+        gravity: "bottom", // Cambia la posición a la esquina superior derecha
         style: {
             width: "300px", // Define un ancho máximo para la notificación
         },
@@ -361,7 +361,7 @@ function mostrarMensajeExito(mensaje) {
         text: mensaje,
         duration: 5000,
         close: true,
-        gravity: "top-left", // Cambia la posición a la esquina superior derecha
+        gravity: "bottom", // Cambia la posición a la esquina superior derecha
         style: {
             width: "300px", // Define un ancho máximo para la notificación
         },
