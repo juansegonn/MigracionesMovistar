@@ -131,10 +131,6 @@ document.addEventListener("DOMContentLoaded", async function() {
                     <select id="estado-${venta.id}">
                     </div>
                     <option value="APROBADA OK">APROBADA OK</option>
-                    <option value="CARGADO EN T3">CARGADO EN T3</option>
-                    <option value="ERROR DE LINEA">ERROR DE LINEA</option>
-                    <option value="RETRABAJAR">RETRABAJAR</option>
-                    <option value="ANULADA GESTION MAL CARGADA">ANULADA GESTION MAL CARGADA</option>
                     <option value="ANULADA CLIENTE DECISTE">ANULADA CLIENTE DECISTE</option>
                     </select>
                     <div class="botonera">
