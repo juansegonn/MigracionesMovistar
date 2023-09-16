@@ -48,7 +48,6 @@ function mostrarCamposVenta() {
     document.querySelector(".section:nth-child(2)").style.display = "block"; // Datos del Vendedor
     document.querySelector(".section:nth-child(3)").style.display = "block"; // Datos del Cliente
     document.querySelector("button[type='submit']:last-of-type").style.display = "block"; // Botón "Registrar Venta"
-    document.querySelector("a.button").style.display = "block"; // Enlace "Acceder a tus Ventas"
     document.querySelector("select").style.display = "block"; // Enlace "Acceder a tus Ventas"
     document.getElementById("plan").style.display = "block"; // Enlace "Acceder a tus Ventas"
     
@@ -243,12 +242,11 @@ function mostrarVenta(venta) {
 
 function restablecerFormulario() {
     // Ocultar los campos relacionados a la venta
-    document.querySelector(".section:nth-child(2)").style.display = "none"; // Datos del Vendedor
-    document.querySelector(".section:nth-child(3)").style.display = "none"; // Datos del Cliente
-    document.querySelector("button[type='submit']:last-of-type").style.display = "none"; // Botón "Registrar Venta"
-    document.querySelector("a.button").style.display = "none"; // Enlace "Acceder a tus Ventas"
-    document.querySelector("select").style.display = "none"; // Enlace "Acceder a tus Ventas"
-    document.getElementById("plan").style.display = "none"; // Enlace "Acceder a tus Ventas"
+    document.querySelector(".section:nth-child(2)").style.display = "none"; 
+    document.querySelector(".section:nth-child(3)").style.display = "none"; 
+    document.querySelector("button[type='submit']:last-of-type").style.display = "none"; 
+    document.querySelector("select").style.display = "none"; 
+    document.getElementById("plan").style.display = "none"; 
 
     // Mostrar el botón "Verificar Número"
     document.querySelector("button[type='submit']:first-of-type").style.display = "block";
