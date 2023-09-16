@@ -1,39 +1,66 @@
-import { ventasCollection, getDocs, doc, updateDoc, database } from "../firebase.js"; // Ajusta la ruta de firebase.js según tu estructura de archivos
+import { ventasCollection, query, orderBy, getDocs } from "../firebase.js"; // Asegúrate de importar las funciones y objetos necesarios
 
-document.addEventListener("DOMContentLoaded", async function() {
+// Crear una consulta para ordenar la colección por fecha
+const ventasQuery = query(ventasCollection, orderBy("fecha"));
+
+// Obtener la colección ordenada una vez fuera de la función
+async function loadVentasOrdenadas() {
+    const ventasSnapshot = await getDocs(ventasQuery);
+    return ventasSnapshot.docs.map((doc) => doc.data());
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
     const filtroForm = document.getElementById("filtro-form");
     const ventasBO = document.getElementById("ventas-bo");
+    const batchSize = 3; // Tamaño del lote a cargar
+    let ventasArray = []; // Almacena todas las ventas
+    let loadedCount = 0; // Contador de ventas cargadas
 
-    const ventasSnapshot = await getDocs(ventasCollection);
-    const ventasArray = ventasSnapshot.docs.map(doc => doc.data());
-    ventasArray.sort((ventaA, ventaB) => {
-        // Parsea las fechas en formato "YYYY-MM-DD" y compáralas
-        const fechaA = new Date(ventaA.fecha);
-        const fechaB = new Date(ventaB.fecha);
-
-        // Si las fechas son iguales, compara por hora
-        if (fechaA.getTime() === fechaB.getTime()) {
-            const horaA = ventaA.hora.split(":");
-            const horaB = ventaB.hora.split(":");
-            
-            // Compara las horas en formato "HH:MM:SS"
-            if (horaA[0] !== horaB[0]) {
-                return horaB[0] - horaA[0];
-            } else if (horaA[1] !== horaB[1]) {
-                return horaB[1] - horaA[1];
-            } else {
-                return horaB[2] - horaA[2];
-            }
+    async function loadMoreSales() {
+        const ventasQuery = query(ventasCollection, orderBy("fecha")); // Consulta para ordenar las ventas por fecha
+        const ventasSnapshot = await getDocs(ventasQuery);
+    
+        const newSales = ventasSnapshot.docs
+            .slice(loadedCount, loadedCount + batchSize)
+            .map((doc) => doc.data());
+    
+        loadedCount += newSales.length;
+    
+        // Si no hay nuevas ventas, detener la carga adicional
+        if (newSales.length === 0) {
+            return;
         }
+    
+        ventasArray = ventasArray.concat(newSales);
+    
+        mostrarVentasBO(ventasArray); // Mostrar todas las ventas cargadas hasta ahora
+    }
+    
+    // Llamar a loadMoreSales inicialmente para cargar las primeras ventas
+    loadMoreSales();
 
-        // Compara las fechas en orden cronológico descendente
-        return fechaB - fechaA;
-    });
-    mostrarVentasBO(ventasArray);
+    async function checkAndLoadMore() {
+        const scrollPosition = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.body.clientHeight;
+
+        if (scrollPosition + windowHeight >= documentHeight) {
+            await loadMoreSales();
+        }
+    }
+
+    // Inicialmente cargar el primer lote de ventas
+    await loadMoreSales();
+
+    // Escuchar eventos de desplazamiento
+    window.addEventListener("scroll", checkAndLoadMore);
 
     filtroForm.addEventListener("submit", function(event) {
         event.preventDefault();
-    
+        applyFilter(); // Llamar a la función de filtro al hacer clic en el botón
+    });
+
+    function applyFilter() {
         const filtroNombreVendedor = document.getElementById("filtro-nombre-vendedor").value.toLowerCase();
         const filtroDNIVendedor = document.getElementById("filtro-dni-vendedor").value.toLowerCase();
         const filtroLinea = document.getElementById("filtro-linea").value.toLowerCase();
@@ -63,9 +90,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
     
         mostrarVentasBO(ventasFiltradas);
-    });
-    
-
+    }
 
     function mostrarVentasBO(ventas) {
         ventasBO.innerHTML = "";
@@ -114,32 +139,30 @@ document.addEventListener("DOMContentLoaded", async function() {
                 ventasBO.appendChild(ventaInfo);
             });
         }
-        
     }
-});
 
-function toggleDetallesVenta(venta) {
-    const detallesVenta = document.getElementById(`detalles-${venta.id}`);
+    function toggleDetallesVenta(venta) {
+        const detallesVenta = document.getElementById(`detalles-${venta.id}`);
 
-    if (detallesVenta) { // Verificar si el elemento existe antes de continuar
-        if (detallesVenta.classList.contains("hidden")) {
-            detallesVenta.innerHTML += `
-                <div class="detalles-venta">
-                    <p>Cliente: ${venta.cliente.nombre}</p>
-                    <p>DNI: ${venta.cliente.dni}</p>
-                    <p>Email: ${venta.cliente.mail}</p>
-                    <p>Linea Alternativa: ${venta.cliente.contacto}</p>
-                    <p>Linea de Llamada: ${venta.cliente.linea}</p>
-                    <p>Plan: ${venta.linea.plan}</p>
-                    <p>Fecha: ${venta.fecha}</p>
-                    <p>Hora: ${venta.hora}</p>
-                </div>
-            `;
-            detallesVenta.classList.remove("hidden");
-        } else {
-            detallesVenta.innerHTML = "";
-            detallesVenta.classList.add("hidden");
+        if (detallesVenta) { // Verificar si el elemento existe antes de continuar
+            if (detallesVenta.classList.contains("hidden")) {
+                detallesVenta.innerHTML += `
+                    <div class="detalles-venta">
+                        <p>Cliente: ${venta.cliente.nombre}</p>
+                        <p>DNI: ${venta.cliente.dni}</p>
+                        <p>Email: ${venta.cliente.mail}</p>
+                        <p>Linea Alternativa: ${venta.cliente.contacto}</p>
+                        <p>Linea de Llamada: ${venta.cliente.linea}</p>
+                        <p>Plan: ${venta.linea.plan}</p>
+                        <p>Fecha: ${venta.fecha}</p>
+                        <p>Hora: ${venta.hora}</p>
+                    </div>
+                `;
+                detallesVenta.classList.remove("hidden");
+            } else {
+                detallesVenta.innerHTML = "";
+                detallesVenta.classList.add("hidden");
+            }
         }
     }
-}
-
+});

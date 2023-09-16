@@ -14,11 +14,22 @@
         <h1>Registro de Ventas</h1>
         <form id="venta-form">
             <div class="section">
+                <h2>Datos de la Venta</h2>
+                <label for="linea-numero">Número de Línea a Migrar:</label>
+                <input type="text" id="linea-numero" required><br>
+                <label id="plan" for="linea-plan" style="display: none;">Plan Adquirido:</label>
+                <select id="linea-plan" class="plan" required style="display: none;">
+                    <option value="1-5GB">1,5 GB (Bono Desc -$2750)</option>
+                    <option value="3GB">3 GB (Bono Desc -$3650)</option>
+                    <option value="6GB">6 GB (Bono Desc -$5100)</option>
+                </select><br>
+            </div>
+            <div class="section" style="display: none;">
                 <h2>Datos del Vendedor</h2>
                 <label for="vendedor-dni">DNI del Vendedor:</label>
                 <input type="text" id="vendedor-dni" required><br>
             </div>
-            <div class="section">
+            <div class="section" style="display: none;">
                 <h2>Datos del Cliente</h2>
                 <label for="cliente-linea">Línea de Contacto (como figura en mitrol):</label>
                 <input type="text" id="cliente-linea" required><br>
@@ -31,20 +42,10 @@
                 <label for="cliente-contacto">Linea Alternativa:</label>
                 <input type="tel" id="cliente-contacto" required><br>
             </div>
-            <div class="section">
-                <h2>Datos de la Venta</h2>
-                <label for="linea-numero">Número de Línea a Migrar:</label>
-                <input type="text" id="linea-numero" required><br>
-                <label for="linea-plan">Plan Adquirido:</label>
-                <select id="linea-plan" required>
-                    <option value="1-5GB">1,5 GB (Bono Desc -$2750)</option>
-                    <option value="3GB">3 GB (Bono Desc -$3650)</option>
-                    <option value="6GB">6 GB (Bono Desc -$5100)</option>
-                </select><br>
-            </div>
             <div class="botonera-venta">
-                <button type="submit">Registrar Venta</button>
-                <a href="paginas/vendedor.html" class="button">Acceder a tus Ventas</a>
+                <button type="submit">Verificar Numero</button>
+                <button type="submit" style="display: none;">Registrar Venta</button>
+                <a style="display: none;" href="paginas/vendedor.html" class="button">Acceder a tus Ventas</a>
                 <div id="loader" class="loader"></div>
             </div>
         </form>

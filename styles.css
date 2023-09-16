@@ -50,6 +50,10 @@ body {
     margin-bottom: 10px;
   }
   
+  .plan{
+    margin-bottom: 0px;
+  }
+
   button[type="submit"] {
     background-color: #ff732d;
     color: #fff;

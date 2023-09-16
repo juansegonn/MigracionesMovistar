@@ -3,6 +3,95 @@ import { ventasCollection } from "./firebase.js";
 
 // Eventos
 const ventaForm = document.getElementById("venta-form");
+const verificarNumeroBtn = document.querySelector("button[type='submit']:first-of-type");
+
+verificarNumeroBtn.addEventListener("click", async function(event) {
+    event.preventDefault();
+    document.getElementById("loader").style.display = "block";
+
+    // Obtener el número de línea
+    const lineaNumeroInput = document.getElementById("linea-numero");
+    const lineaNumero = lineaNumeroInput.value;
+
+    // Verificar si tiene 10 dígitos
+    if (lineaNumero.length !== 10) {
+        mostrarMensajeError("El número de línea debe tener exactamente 10 dígitos.");
+        document.getElementById("loader").style.display = "none";
+        return;
+    }
+
+    // Verificar si ya existe una venta con el mismo número de línea
+    const q = query(ventasCollection, where("linea.numero", "==", lineaNumero));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+        mostrarMensajeError("Ya existe una venta con este número de línea.");
+        document.getElementById("loader").style.display = "none";
+        return;
+    }
+
+    // Verificar si el número está en la base CSV
+    const numerosCSV = await cargarNumerosDesdeCSV();
+    if (!numerosCSV.includes(lineaNumero)) {
+        mostrarMensajeError("Número fuera de base.");
+        document.getElementById("loader").style.display = "none";
+        return;
+    }
+
+    // Si el número no existe en ventas y sí en CSV, mostrar los campos y ocultar el botón "Verificar Numero"
+    mostrarCamposVenta();
+    document.getElementById("loader").style.display = "none";
+});
+
+function mostrarCamposVenta() {
+    // Mostrar los campos relacionados a la venta
+    document.querySelector(".section:nth-child(2)").style.display = "block"; // Datos del Vendedor
+    document.querySelector(".section:nth-child(3)").style.display = "block"; // Datos del Cliente
+    document.querySelector("button[type='submit']:last-of-type").style.display = "block"; // Botón "Registrar Venta"
+    document.querySelector("a.button").style.display = "block"; // Enlace "Acceder a tus Ventas"
+    document.querySelector("select").style.display = "block"; // Enlace "Acceder a tus Ventas"
+    document.getElementById("plan").style.display = "block"; // Enlace "Acceder a tus Ventas"
+    
+    // Ocultar el botón "Verificar Numero"
+    document.querySelector("button[type='submit']:first-of-type").style.display = "none";
+}
+
+// Función para cargar los números desde el archivo CSV "numeros.csv"
+async function cargarNumerosDesdeCSV() {
+    return new Promise((resolve, reject) => {
+        const archivoCSV = "numeros.csv"; // Nombre del archivo CSV en la raíz del proyecto
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", archivoCSV);
+
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                const contenidoCSV = xhr.responseText;
+                const lineasCSV = contenidoCSV.split('\n');
+                const numeros = [];
+
+                for (let i = 1; i < lineasCSV.length; i++) {
+                    const linea = lineasCSV[i].trim();
+                    if (linea) {
+                        const numero = linea; // El número es la línea completa en este caso
+                        numeros.push(numero);
+                    }
+                }
+
+                resolve(numeros);
+            } else {
+                reject(new Error(`Error al cargar el archivo CSV: ${xhr.statusText}`));
+            }
+        };
+
+        xhr.onerror = () => {
+            reject(new Error("Error de red al cargar el archivo CSV"));
+        };
+
+        xhr.send();
+    });
+}
+
 
 ventaForm.addEventListener("submit", async function(event) {
     event.preventDefault();
@@ -19,23 +108,6 @@ ventaForm.addEventListener("submit", async function(event) {
     const lineaNumeroInput = document.getElementById("linea-numero");
     const lineaNumero = lineaNumeroInput.value;
     const lineaPlan = document.getElementById("linea-plan").value;
-    
-    // Verificar si tiene 10 digitos
-    if (lineaNumero.length !== 10) {
-        mostrarMensajeError("El número de línea debe tener exactamente 10 dígitos.");
-        document.getElementById("loader").style.display = "none";
-        return;
-    }
-
-    // Verificar si ya existe una venta con el mismo número de línea
-    const q = query(ventasCollection, where("linea.numero", "==", lineaNumero));
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-        mostrarMensajeError("Ya existe una venta con este número de línea.");
-        document.getElementById("loader").style.display = "none";
-        return;
-    }
 
     // Datos del Vendedor
     const vendedorDNI = document.getElementById("vendedor-dni").value;
@@ -166,4 +238,18 @@ function mostrarVenta(venta) {
     // Implementa la lógica para mostrar la venta en tu interfaz de usuario aquí
     // Puedes acceder a los campos de la venta como venta.id, venta.fechaHora, etc.
     console.log("Venta registrada:", venta);
+    restablecerFormulario()
+}
+
+function restablecerFormulario() {
+    // Ocultar los campos relacionados a la venta
+    document.querySelector(".section:nth-child(2)").style.display = "none"; // Datos del Vendedor
+    document.querySelector(".section:nth-child(3)").style.display = "none"; // Datos del Cliente
+    document.querySelector("button[type='submit']:last-of-type").style.display = "none"; // Botón "Registrar Venta"
+    document.querySelector("a.button").style.display = "none"; // Enlace "Acceder a tus Ventas"
+    document.querySelector("select").style.display = "none"; // Enlace "Acceder a tus Ventas"
+    document.getElementById("plan").style.display = "none"; // Enlace "Acceder a tus Ventas"
+
+    // Mostrar el botón "Verificar Número"
+    document.querySelector("button[type='submit']:first-of-type").style.display = "block";
 }
